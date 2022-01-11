@@ -1,0 +1,140 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: serverless-groovy-demo
+
+Parameters:
+  Stage:
+    Type: String
+    Description: The stage where the application is running in, e.g., dev, prod.
+    Default: dev
+
+Globals:
+  Function:
+    Tracing: Active
+    Layers:
+      - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:java-optimization-layer:1"
+    Architectures:
+      - arm64
+    Environment:
+      Variables:
+        AWS_LAMBDA_EXEC_WRAPPER: '/opt/java-exec-wrapper'
+        PRODUCT_TABLE_NAME: !Ref ProductsTable
+        POWERTOOLS_SERVICE_NAME: Products
+
+Resources:
+  GetProductFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: software.amazonaws.example.product.entrypoints.ApiGatewayGetProductRequestHandler::handleRequest
+      Runtime: java11
+      MemorySize: 1024
+      Timeout: 300
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref ProductsTable
+      Events:
+        Product:
+          Type: HttpApi
+          Properties:
+            Path: '/{id}'
+            Method: GET
+            ApiId: !Ref ProductsApi
+
+  GetAllProductsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: software.amazonaws.example.product.entrypoints.ApiGatewayGetAllProductRequestHandler::handleRequest
+      Runtime: java11
+      MemorySize: 1024
+      Timeout: 600
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref ProductsTable
+      Events:
+        Product:
+          Type: HttpApi
+          Properties:
+            Path: '/'
+            Method: GET
+            ApiId: !Ref ProductsApi
+
+  PutProductsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: software.amazonaws.example.product.entrypoints.ApiGatewayPutProductRequestHandler::handleRequest
+      Runtime: java11
+      MemorySize: 1024
+      Timeout: 600
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ProductsTable
+      Events:
+        Product:
+          Type: HttpApi
+          Properties:
+            Path: '/{id}'
+            Method: PUT
+            ApiId: !Ref ProductsApi
+
+  DeleteProductFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: software.amazonaws.example.product.entrypoints.ApiGatewayDeleteProductRequestHandler::handleRequest
+      Runtime: java11
+      MemorySize: 1024
+      Timeout: 600
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ProductsTable
+      Events:
+        Product:
+          Type: HttpApi
+          Properties:
+            Path: '/{id}'
+            Method: DELETE
+            ApiId: !Ref ProductsApi
+
+  GetProductFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${GetProductFunction}"
+      RetentionInDays: 7
+
+  GetAllProductFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${GetAllProductsFunction}"
+      RetentionInDays: 7
+
+  PutProductsFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${PutProductsFunction}"
+      RetentionInDays: 7
+
+  DeleteProductFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${DeleteProductFunction}"
+      RetentionInDays: 7
+
+  ProductsApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: !Ref Stage
+
+  ProductsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: 'PK'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'PK'
+          KeyType: 'HASH'
+      BillingMode: PAY_PER_REQUEST
+
+Outputs:
+  ProductsApi:
+    Description: "API Gateway endpoint URL for Products API"
+    Value: !Sub "https://${ProductsApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/${Stage}"
