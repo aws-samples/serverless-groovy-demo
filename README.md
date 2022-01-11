@@ -34,7 +34,7 @@ Make sure the app name used here matches with the `STACK_NAME` present under `lo
 
 ## Load Test
 
-[Artillery](https://www.artillery.io/) is used to make 300 requests / second for 10 minutes to our API endpoints. You
+[Artillery](https://www.artillery.io/) is used to make 200 requests / second for 2 minutes to our API endpoints. You
 can run this with the following command.
 
 ```bash

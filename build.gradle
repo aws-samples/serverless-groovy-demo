@@ -26,7 +26,6 @@ dependencies {
   }
   implementation 'software.amazon.awssdk:aws-crt-client:2.14.13-PREVIEW'
   implementation 'org.slf4j:slf4j-api:1.7.32'
-  implementation 'com.amazonaws:aws-xray-recorder-sdk-aws-sdk-v2:2.10.0'
   implementation 'software.amazon.awssdk:auth:2.17.102'
   implementation 'software.amazon.awssdk:aws-core:2.17.102'
   implementation 'software.amazon.awssdk:http-client-spi:2.17.102'
