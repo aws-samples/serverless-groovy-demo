@@ -10,6 +10,7 @@ Parameters:
 
 Globals:
   Function:
+    MemorySize: 1024
     Tracing: Active
     Layers:
       - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:java-optimization-layer:1"
@@ -27,7 +28,6 @@ Resources:
     Properties:
       Handler: software.amazonaws.example.product.entrypoints.ApiGatewayGetProductRequestHandler::handleRequest
       Runtime: java11
-      MemorySize: 1024
       Timeout: 300
       Policies:
         - DynamoDBReadPolicy:
@@ -45,7 +45,6 @@ Resources:
     Properties:
       Handler: software.amazonaws.example.product.entrypoints.ApiGatewayGetAllProductRequestHandler::handleRequest
       Runtime: java11
-      MemorySize: 1024
       Timeout: 600
       Policies:
         - DynamoDBReadPolicy:
@@ -63,7 +62,6 @@ Resources:
     Properties:
       Handler: software.amazonaws.example.product.entrypoints.ApiGatewayPutProductRequestHandler::handleRequest
       Runtime: java11
-      MemorySize: 1024
       Timeout: 600
       Policies:
         - DynamoDBCrudPolicy:
@@ -81,7 +79,6 @@ Resources:
     Properties:
       Handler: software.amazonaws.example.product.entrypoints.ApiGatewayDeleteProductRequestHandler::handleRequest
       Runtime: java11
-      MemorySize: 1024
       Timeout: 600
       Policies:
         - DynamoDBCrudPolicy:
