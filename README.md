@@ -92,6 +92,7 @@ You can find implementations of this project in other languages here:
 * [Kotlin](https://github.com/aws-samples/serverless-kotlin-demo)
 * [🏗️ TypeScript](https://github.com/aws-samples/serverless-typescript-demo)
 * [🐿️ Go](https://github.com/aws-samples/serverless-go-demo)
+* [Micronaut, Quarkus, Springboot](https://github.com/aws-samples/serverless-java-frameworks-samples)
 
 ## Security
 
